@@ -1,5 +1,6 @@
 package com;
 
+
 public class Game {
 
 	private Tank tank1;
@@ -39,16 +40,16 @@ public class Game {
 	public int getTurn() {
 		return turn;
 	}
-	
-	public void makeTurn(){
+
+	public void makeTurn() {
 		turn++;
 	}
-	
-	public Player getPlayer1(){
+
+	public Player getPlayer1() {
 		return player1;
 	}
-	
-	public Player getPlayer2(){
+
+	public Player getPlayer2() {
 		return player2;
 	}
 }

@@ -3,17 +3,13 @@ package com;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements Runnable, CollisonListener {
 
 	private Game game;
-	private int turn = 0;
 	private Thread runner;
 	private static GamePanel instance = null;
 	private Image img;
@@ -26,17 +22,25 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 
 		game.getPlayer1().getProgressBar().setSize(20, 100);
 		game.getPlayer1().getProgressBar().setLocation(50, 50);
+		JLabel name1 = game.getPlayer1().getNameLabel();
+		name1.setLocation(80, 50);
+		name1.setSize(100, 100);
 		add(game.getPlayer1().getProgressBar());
+		add(name1);
 
 		game.getPlayer2().getProgressBar().setSize(20, 100);
 		game.getPlayer2().getProgressBar().setLocation(1300, 50);
+		JLabel name2 = game.getPlayer2().getNameLabel();
+		name2.setLocation(1270, 50);
+		name2.setSize(100, 100);
 		add(game.getPlayer2().getProgressBar());
-		img = getToolkit().createImage("C:\\Users\\dell-iman\\workspace\\JTank\\src\\mc1SHbe.gif");
-		
-	
-		
-	}
+		add(name2);
 
+		img = getToolkit().createImage(
+				"C:\\Users\\dell-iman\\workspace\\JTank\\pics\\back.gif");
+
+	}
+	
 	public static GamePanel getGamePanel() {
 		if (instance == null)
 			new GamePanel();
@@ -44,12 +48,23 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 	}
 
 	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
+		game.getPlayer1().getNameLabel().paint(g);
+		game.getPlayer2().getNameLabel().paint(g);
+	}
+
+	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-
-		g.drawImage(img, 0, 0, this);
+		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+		
 		game.getPlayer1().getProgressBar().repaint();
 		game.getPlayer2().getProgressBar().repaint();
+		game.getPlayer1().getNameLabel().repaint();
+		game.getPlayer2().getNameLabel().repaint();
+		
 		game.getTank1().paint(g);
 		game.getTank2().paint(g);
 		if (game.getTank1().getMissle() != null)
@@ -62,6 +77,28 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 	public void update(Graphics g) {
 		paint(g);
 	}
+
+	// public void renderImage(Graphics g) {
+	// if (!runned) {
+	// new Thread(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// while (true) {
+	// g.drawImage(GamePanel.getGamePanel().img, 0, 0,
+	// GamePanel.getGamePanel());
+	// try {
+	// Thread.sleep(10);
+	// } catch (InterruptedException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
+	// }
+	// });
+	// runned = true;
+	// }
+	// }
 
 	@Override
 	protected void processKeyEvent(KeyEvent e) {
@@ -186,7 +223,7 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 		if (event.getState() == 0) {
 			game.getPlayer1().setLife(game.getPlayer1().getLife() - 10);
 			game.getPlayer1().setBar(game.getPlayer1().getLife() - 10);
-		}else{
+		} else {
 
 			game.getPlayer2().setLife(game.getPlayer1().getLife() - 10);
 			game.getPlayer2().setBar(game.getPlayer1().getLife() - 10);

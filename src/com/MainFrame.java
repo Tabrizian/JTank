@@ -1,11 +1,5 @@
 package com;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-import java.awt.geom.AffineTransform;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 

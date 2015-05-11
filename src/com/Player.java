@@ -2,14 +2,16 @@ package com;
 
 import java.awt.Color;
 
+import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 public class Player {
 	
 	private String name;
-	private Tank tank;
 	private int life = 100;
 	private JProgressBar bar;
+	private JLabel nameLabel;
+	
 	public Player(String name){
 		this.name = name;
 		bar = new JProgressBar();
@@ -17,6 +19,7 @@ public class Player {
 		bar.setValue(100);
 		bar.setForeground(Color.green);
 		bar.setOrientation(JProgressBar.VERTICAL);
+		nameLabel = new JLabel(name);
 	}
 
 	public String getName() {
@@ -40,7 +43,9 @@ public class Player {
 		bar.setValue(life);
 	}
 	
-	
+	public JLabel getNameLabel(){
+		return nameLabel;
+	}
 
 	
 }
