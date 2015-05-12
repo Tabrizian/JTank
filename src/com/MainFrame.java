@@ -11,6 +11,9 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		setExtendedState(MAXIMIZED_BOTH);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setExtendedState(MAXIMIZED_BOTH);
+		setUndecorated(true);
+		setAlwaysOnTop(true);
 		setVisible(true);
 		setResizable(false);
 

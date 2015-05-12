@@ -1,8 +1,11 @@
 package com;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
+import java.util.Random;
 
 public class Tank {
 
@@ -11,18 +14,27 @@ public class Tank {
 	private static int population = 0;
 	private Missle missle = null;
 	private int theta = 0;
+	private Color color;
 
-	public Tank() {
+	public Tank(Color color) {
+		super();
 		if (population == 0) {
-			pos = new Position(50, 500);
+			pos = new Position(
+					new Random(System.currentTimeMillis()+80).nextInt(1800) + 50,
+					600);
 		} else {
-			pos = new Position(1200, 500);
+			pos = new Position(
+					new Random(System.currentTimeMillis()).nextInt(1800) + 50,
+					600);
 			player1 = false;
 		}
+		this.color = color;
+
 		population++;
 	}
 
 	public void paint(Graphics g) {
+		g.setColor(color);
 		g.fillRect((int) pos.getX(), (int) pos.getY(), 100, 50);
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -50,9 +62,9 @@ public class Tank {
 		return pos;
 	}
 
-	public int shoot() {
-		if (missle == null){
-			missle = new Missle(getEndOfTube(),200);
+	public int shoot(Image img) {
+		if (missle == null) {
+			missle = new Missle(getEndOfTube(), 200,img);
 			missle.addListener(GamePanel.getGamePanel());
 		}
 		return missle.fire(this);

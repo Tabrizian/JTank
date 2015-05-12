@@ -1,11 +1,16 @@
 package com;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class GamePanel extends JPanel implements Runnable, CollisonListener {
 
@@ -13,7 +18,8 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 	private Thread runner;
 	private static GamePanel instance = null;
 	private Image img;
-
+	private Random random;
+	private Image imgExp;
 	private GamePanel() {
 		instance = this;
 		game = Game.getGame();
@@ -24,21 +30,27 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 		game.getPlayer1().getProgressBar().setLocation(50, 50);
 		JLabel name1 = game.getPlayer1().getNameLabel();
 		name1.setLocation(80, 50);
-		name1.setSize(100, 100);
+		name1.setSize(200, 100);
+		name1.setForeground(Color.WHITE);
+		name1.setFont(new Font("TimesRoman", Font.BOLD, 40));
 		add(game.getPlayer1().getProgressBar());
-		add(name1);
 
 		game.getPlayer2().getProgressBar().setSize(20, 100);
-		game.getPlayer2().getProgressBar().setLocation(1300, 50);
+		game.getPlayer2().getProgressBar().setLocation(1200, 50);
+		
 		JLabel name2 = game.getPlayer2().getNameLabel();
-		name2.setLocation(1270, 50);
-		name2.setSize(100, 100);
+		name2.setLocation(1230, 50);
+		name2.setSize(200, 100);
+		name2.setForeground(Color.WHITE);
+		name2.setFont(new Font("TimesRoman", Font.BOLD, 40));
 		add(game.getPlayer2().getProgressBar());
 		add(name2);
 
 		img = getToolkit().createImage(
-				"C:\\Users\\dell-iman\\workspace\\JTank\\pics\\back.gif");
-
+				"C:\\Users\\dell-iman\\workspace\\JTank\\pics\\back" +( new Random(System.currentTimeMillis()).nextInt(4)+1)+".gif");
+		imgExp =getToolkit().createImage(
+				"C:\\Users\\dell-iman\\workspace\\JTank\\pics\\explosion.gif"); 
+		add(name1);
 	}
 	
 	public static GamePanel getGamePanel() {
@@ -50,7 +62,7 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
+//		g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
 		game.getPlayer1().getNameLabel().paint(g);
 		game.getPlayer2().getNameLabel().paint(g);
 	}
@@ -59,12 +71,7 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 	public void paint(Graphics g) {
 		super.paint(g);
 		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
-		
-		game.getPlayer1().getProgressBar().repaint();
-		game.getPlayer2().getProgressBar().repaint();
-		game.getPlayer1().getNameLabel().repaint();
-		game.getPlayer2().getNameLabel().repaint();
-		
+		paintComponents(g);
 		game.getTank1().paint(g);
 		game.getTank2().paint(g);
 		if (game.getTank1().getMissle() != null)
@@ -77,28 +84,6 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 	public void update(Graphics g) {
 		paint(g);
 	}
-
-	// public void renderImage(Graphics g) {
-	// if (!runned) {
-	// new Thread(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// while (true) {
-	// g.drawImage(GamePanel.getGamePanel().img, 0, 0,
-	// GamePanel.getGamePanel());
-	// try {
-	// Thread.sleep(10);
-	// } catch (InterruptedException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	// });
-	// runned = true;
-	// }
-	// }
 
 	@Override
 	protected void processKeyEvent(KeyEvent e) {
@@ -143,16 +128,16 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 		int resume = 3;
 		while (resume == 3) {
 			if (game.getTurn() % 2 == 0)
-				resume = game.getTank1().shoot();
+				resume = game.getTank1().shoot(imgExp);
 			else
-				resume = game.getTank2().shoot();
+				resume = game.getTank2().shoot(imgExp);
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-
+	
 			repaint();
 			if (resume != 3) {
 				if (game.getTurn() % 2 == 0) {
@@ -167,13 +152,13 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 								.getMissle()
 								.fireCollision(
 										new CollisionEvent(GamePanel
-												.getGamePanel(), 0));
+												.getGamePanel(), 2));
 					} else {
 						game.getTank1()
 								.getMissle()
 								.fireGoneOutOfPage(
 										new CollisionEvent(GamePanel
-												.getGamePanel(), 0));
+												.getGamePanel(), 3));
 					}
 				} else {
 					if (resume == 0) {
@@ -187,23 +172,26 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 								.getMissle()
 								.fireCollision(
 										new CollisionEvent(GamePanel
-												.getGamePanel(), 0));
+												.getGamePanel(), 2));
 					} else {
 						game.getTank2()
 								.getMissle()
 								.fireGoneOutOfPage(
 										new CollisionEvent(GamePanel
-												.getGamePanel(), 0));
+												.getGamePanel(), 3));
 					}
 				}
+			
 				try {
 					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				break;
 			}
 		}
+		
 		if (game.getTurn() % 2 == 0)
 			game.getTank1().setMissle(null);
 		else
@@ -222,13 +210,31 @@ public class GamePanel extends JPanel implements Runnable, CollisonListener {
 	public void collided(CollisionEvent event) {
 		if (event.getState() == 0) {
 			game.getPlayer1().setLife(game.getPlayer1().getLife() - 10);
-			game.getPlayer1().setBar(game.getPlayer1().getLife() - 10);
-		} else {
-
-			game.getPlayer2().setLife(game.getPlayer1().getLife() - 10);
-			game.getPlayer2().setBar(game.getPlayer1().getLife() - 10);
+			game.getPlayer1().setBar(game.getPlayer1().getLife());
+			if(Game.getGame().getPlayer1().getLife() == 0){
+				JOptionPane.showMessageDialog(null, "Player1 lost");
+				try {
+					Thread.sleep(2000);
+					System.exit(0);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} else if(event.getState() == 2) {
+			game.getPlayer2().setLife(game.getPlayer2().getLife() - 10);
+			game.getPlayer2().setBar(game.getPlayer2().getLife());
+			if(Game.getGame().getPlayer2().getLife() == 0){
+				JOptionPane.showMessageDialog(null, "Player2 lost");
+				try {
+					Thread.sleep(2000);
+					System.exit(0);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
-		repaint();
 	}
 
 }
